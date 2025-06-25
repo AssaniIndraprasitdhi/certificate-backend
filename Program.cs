@@ -1,6 +1,8 @@
 using CertificateAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using DotNetEnv;
+using CertificateAPI.Services.Interfaces;
+using CertificateAPI.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
