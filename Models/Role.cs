@@ -10,6 +10,6 @@ namespace CertificateAPI.Models
         [Required, MaxLength(30)]
         public string Name { get; set; } = null!;
 
-        public ICollection<UserRole>? UserRoles { get; set; }
+        public List<UserRole> UserRoles { get; set; } = new();
     }
 }

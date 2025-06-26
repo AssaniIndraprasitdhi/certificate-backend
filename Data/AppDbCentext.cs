@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using CertificateAPI.Models;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.Net.Http.Headers;
 
 namespace CertificateAPI.Data
 {
@@ -13,7 +14,7 @@ namespace CertificateAPI.Data
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<UserRole> UserRoles => Set<UserRole>();
         public DbSet<Training> Trainings => Set<Training>();
-
+        public DbSet<Certificate> Certificates => Set<Certificate>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -30,6 +31,10 @@ namespace CertificateAPI.Data
                 .HasOne(ur => ur.Role)
                 .WithMany(u => u.UserRoles)
                 .HasForeignKey(ur => ur.RoleId);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()");
         }
     }
 }

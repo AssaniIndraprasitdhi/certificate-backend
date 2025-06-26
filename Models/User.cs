@@ -13,12 +13,19 @@ namespace CertificateAPI.Models
         [Required, MaxLength(50)]
         public string LastName { get; set; } = null!;
 
-        [Required, EmailAddress]
+        [Required, EmailAddress, MaxLength(100)]
         public string Email { get; set; } = null!;
 
         [Required]
         public string PasswordHash { get; set; } = null!;
 
-        public ICollection<UserRole>? UserRoles { get; set; }
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? UpdatedAt { get; set; }
+
+        public List<UserRole> UserRoles { get; set; } = new();
+
+        public List<Certificate> Certificates { get; set; } = new();
     }
 }
