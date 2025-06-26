@@ -2,6 +2,8 @@ using CertificateAPI.Services.Interfaces;
 using CertificateAPI.DTOs.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace CertificateAPI.Controller
 {
@@ -25,7 +27,15 @@ namespace CertificateAPI.Controller
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var token = await _authService.LoginAsync(dto);
-            return Ok( new { Token = token });
+            return Ok(new { Token = token });
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public IActionResult GetMe()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Ok(new { userId });
         }
     }
 }

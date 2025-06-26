@@ -18,7 +18,6 @@ namespace CertificateAPI.Services.Implementations
         {
             _db = db;
 
-            // Load .env once (ปลอดภัยแม้โหลดหลายรอบ)
             DotNetEnv.Env.Load();
         }
 
@@ -65,7 +64,7 @@ namespace CertificateAPI.Services.Implementations
             if (user == null || !VerifyPassword(dto.Password, user.PasswordHash))
                 throw new Exception("Invalid email or password.");
 
-            var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
+            var roles = user.UserRoles?.Select(ur => ur.Role.Name).ToList() ?? new List<string>();
             var token = JwtHelper.GenerateToken(user.Id.ToString(), user.Email, roles);
             return token;
         }

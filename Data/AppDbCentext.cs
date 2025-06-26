@@ -12,6 +12,7 @@ namespace CertificateAPI.Data
         public DbSet<User> Users => Set<User>();
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<UserRole> UserRoles => Set<UserRole>();
+        public DbSet<Training> Trainings => Set<Training>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
