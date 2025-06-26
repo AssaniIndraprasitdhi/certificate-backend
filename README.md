@@ -1,34 +1,27 @@
-# 🎓 CertificateAPI
+# certificate-backend
 
-ระบบจัดการข้อมูลการอบรมภายในองค์กร พร้อมรองรับ JWT Authentication และ Swagger สำหรับ API Testing
+A RESTful API for managing training courses and user authentication using ASP.NET Core (.NET 8), Entity Framework Core, SQL Server, and JWT.
 
----
+## Features
 
-## 🚀 Features
+- User Registration & JWT Authentication
+- Role-based Access Control (default role: USER)
+- CRUD operations for Training courses
+- Swagger UI integration for API testing
+- Middleware-based JWT validation
+- Environment-based configuration with `.env`
+- Seed data for default roles
 
-- ✅ ลงทะเบียนผู้ใช้งาน พร้อมกำหนด Role
-- 🔐 ระบบ JWT Authentication แบบปลอดภัย
-- 📄 จัดการข้อมูล Training (CRUD)
-- 📦 RESTful API พร้อม Swagger UI
-- 🛡 ใช้ Middleware ตรวจสอบ Token
-- 📚 เชื่อมต่อฐานข้อมูล MS SQL Server ด้วย EF Core
+## Tech Stack
 
----
+- **Backend**: ASP.NET Core (.NET 8)
+- **Database**: SQL Server with Entity Framework Core
+- **Authentication**: JWT Bearer Tokens
+- **Middleware**: Custom JWT validation
+- **Documentation**: Swagger UI
+- **Environment Config**: DotNetEnv
 
-## 🛠 Tech Stack
-
-| Layer          | Technology                    |
-|----------------|-------------------------------|
-| Backend        | ASP.NET Core 8                |
-| ORM            | Entity Framework Core         |
-| DB             | Microsoft SQL Server          |
-| Auth           | JWT (HS256)                   |
-| Docs           | Swagger / Swashbuckle         |
-| Config         | DotNetEnv (.env)              |
-
----
-
-## 📁 Folder Structure
+## Folder Structure
 
 ```
 CertificateAPI/
@@ -36,85 +29,118 @@ CertificateAPI/
 │   └── TrainingController.cs
 ├── DTOs/
 │   └── Training/
+│       └── TrainingDto.cs
 ├── Middleware/
 │   └── JwtMiddleware.cs
 ├── Models/
-│   └── Training.cs
+│   ├── Training.cs
+│   ├── User.cs
+│   └── UserRole.cs
 ├── Services/
 │   ├── Interfaces/
+│   │   ├── IAuthService.cs
+│   │   └── ITrainingService.cs
 │   └── Implementations/
+│       ├── AuthService.cs
+│       └── TrainingService.cs
 ├── Data/
-│   └── AppDbContext.cs
+│   ├── AppDbContext.cs
+│   └── SeedData.cs
 ├── Program.cs
 └── appsettings.json
 ```
 
----
+## Setup Instructions
 
-## ⚙️ Environment Variables (`.env`)
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/AssaniIndraprasitdhi/certificate-backend.git
+cd CertificateAPI
+```
+
+### 2. Setup Environment Variables
+
+Create a `.env` file in the root directory with the following content:
 
 ```env
-DB_CONNECTION_STRING=Server=...;Database=...;User Id=...;Password=...
-JWT_SECRET=your-base64-secret-key
+DB_CONNECTION_STRING=YourConnectionStringHere
+JWT_SECRET=YourSecureSecretKeyHere
 JWT_ISSUER=CertificateAPI
 JWT_AUDIENCE=CertificateUser
 ```
 
----
+> 💡 Use a secure random string (Base64 or ASCII ≥ 32 chars) for `JWT_SECRET`.
 
-## 🧪 Example API Request (via Swagger/Postman)
+### 3. Run Migrations
 
-### 🔐 Auth Login
+Ensure your SQL Server instance is running, then:
 
-```http
-POST /api/auth/login
+```bash
+dotnet ef migrations add InitialCreate
+dotnet ef database update
 ```
 
-### 🎓 Create Training
+### 4. Run the Application
 
-```http
-POST /api/trainings
-Authorization: Bearer {your_token}
-Content-Type: application/json
+```bash
+dotnet run
+```
 
+Access Swagger UI at: `https://localhost:{port}/swagger`
+
+---
+
+## API Endpoints
+
+### Auth
+
+- `POST /api/auth/register` – Register a new user (role: USER)
+- `POST /api/auth/login` – Login and receive JWT token
+
+### Training
+
+- `GET /api/trainings` – Get all trainings
+- `GET /api/trainings/{id}` – Get training by ID
+- `POST /api/trainings` – Create new training (requires JWT)
+- `PUT /api/trainings/{id}` – Update training (requires JWT)
+- `DELETE /api/trainings/{id}` – Delete training (requires JWT)
+
+> Add `Authorization: Bearer {token}` header when calling secured endpoints.
+
+---
+
+## Authentication (JWT)
+
+The system uses JWT Bearer token for authentication. Token must be included in the request header:
+
+```
+Authorization: Bearer <your_token>
+```
+
+### Example Token Payload
+
+```json
 {
-  "title": "Intro to C#",
-  "description": "Basic C# and .NET programming course",
-  "date": "2025-07-01T09:00:00.000Z",
-  "location": "Engineering Hall",
-  "trainerName": "Dr. Somchai Wisawa"
+  "sub": "user_id",
+  "email": "user@example.com",
+  "role": "USER",
+  "exp": 1750912761,
+  "iss": "CertificateAPI",
+  "aud": "CertificateUser"
 }
 ```
 
 ---
 
-## 🧭 Swagger URL
+## Error Handling
 
-- 👉 http://localhost:{port}/swagger
-
----
-
-## 🖥 Setup & Run
-
-```bash
-# 1. Clone repo
-git clone https://github.com/AssaniIndraprasitdhi/CertificateAPI.git
-cd CertificateAPI
-
-cp .env.example .env  
-
-# 3. Build & Run
-dotnet restore
-dotnet ef database update
-dotnet run
-```
+- `401 Unauthorized`: Missing/invalid token
+- `400 Bad Request`: Invalid payload or missing fields
+- `500 Internal Server Error`: Database or server issue
 
 ---
 
-## 📌 License
+## License
 
-MIT © 2025 Assani Indraprasitdhi
-
----
-
-> พัฒนาโดยนักศึกษาวิศวกรรมซอฟต์แวร์ — สำหรับฝึกทักษะ Full Stack และ .NET Core API Development
+This project is licensed under the MIT License.
