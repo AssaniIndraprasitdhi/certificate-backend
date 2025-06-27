@@ -22,5 +22,7 @@ namespace CertificateAPI.Models
 
         [ForeignKey("CreatedBy")]
         public User? Creator { get; set; }
+
+        public Certificate? Certificate { get; set; }
     }
 }

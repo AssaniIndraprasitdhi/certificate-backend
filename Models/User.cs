@@ -26,6 +26,6 @@ namespace CertificateAPI.Models
 
         public List<UserRole> UserRoles { get; set; } = new();
 
-        public List<Certificate> Certificates { get; set; } = new();
+        public List<Certificate> UserCertificates { get; set; } = new();
     }
 }

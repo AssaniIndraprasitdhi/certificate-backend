@@ -4,6 +4,7 @@ using CertificateAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CertificateAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250627011456_UpdateCertificateModel")]
+    partial class UpdateCertificateModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,45 +31,20 @@ namespace CertificateAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CertificateName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("CourseName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("IssuedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("IssuingOrganization")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SignatureUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("TrainingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TrainingId")
-                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -167,33 +145,6 @@ namespace CertificateAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CertificateAPI.Models.UserCertificate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CertificateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DateReceived")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ScoreOrHours")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CertificateId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserCertificates");
-                });
-
             modelBuilder.Entity("CertificateAPI.Models.UserRole", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -211,17 +162,13 @@ namespace CertificateAPI.Migrations
 
             modelBuilder.Entity("CertificateAPI.Models.Certificate", b =>
                 {
-                    b.HasOne("CertificateAPI.Models.Training", "Training")
-                        .WithOne("Certificate")
-                        .HasForeignKey("CertificateAPI.Models.Certificate", "TrainingId")
+                    b.HasOne("CertificateAPI.Models.User", "User")
+                        .WithMany("Certificates")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CertificateAPI.Models.User", null)
-                        .WithMany("UserCertificates")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Training");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CertificateAPI.Models.Training", b =>
@@ -231,21 +178,6 @@ namespace CertificateAPI.Migrations
                         .HasForeignKey("CreatedBy");
 
                     b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("CertificateAPI.Models.UserCertificate", b =>
-                {
-                    b.HasOne("CertificateAPI.Models.Certificate", null)
-                        .WithMany("UserCertificates")
-                        .HasForeignKey("CertificateId");
-
-                    b.HasOne("CertificateAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CertificateAPI.Models.UserRole", b =>
@@ -267,24 +199,14 @@ namespace CertificateAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CertificateAPI.Models.Certificate", b =>
-                {
-                    b.Navigation("UserCertificates");
-                });
-
             modelBuilder.Entity("CertificateAPI.Models.Role", b =>
                 {
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("CertificateAPI.Models.Training", b =>
-                {
-                    b.Navigation("Certificate");
-                });
-
             modelBuilder.Entity("CertificateAPI.Models.User", b =>
                 {
-                    b.Navigation("UserCertificates");
+                    b.Navigation("Certificates");
 
                     b.Navigation("UserRoles");
                 });

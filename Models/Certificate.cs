@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.InteropServices;
 
 
 namespace CertificateAPI.Models
@@ -9,25 +10,30 @@ namespace CertificateAPI.Models
         [Key]
         public Guid Id { get; set; }
 
-        [Required, MaxLength(50)]
-        public string FirstName { get; set; } = null!;
+        [Required, MaxLength(100)]
+        public string CertificateName { get; set; } = null!;
 
-        [Required, MaxLength(50)]
-        public string LastName { get; set; } = null!;
+        [MaxLength(200)]
+        public string? Description { get; set; }
 
         [Required]
-        public string FileUrl { get; set; } = null!;
+        public string IssuingOrganization { get; set; } = null!;
 
         [Required]
         public DateTime IssuedDate { get; set; }
 
         [Required]
-        public Guid UserId { get; set; }
+        public string SignatureUrl { get; set; } = null!;
 
-        [ForeignKey("UserId")]
-        public User User { get; set; } = null!;
+        public string? CourseName { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
 
+        [Required]
+        public Guid TrainingId { get; set; }
+        public Training Training { get; set; } = null!;
+
+        public List<UserCertificate> UserCertificates { get; set; } = new();
     }
 }

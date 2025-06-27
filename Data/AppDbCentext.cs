@@ -15,6 +15,7 @@ namespace CertificateAPI.Data
         public DbSet<UserRole> UserRoles => Set<UserRole>();
         public DbSet<Training> Trainings => Set<Training>();
         public DbSet<Certificate> Certificates => Set<Certificate>();
+        public DbSet<UserCertificate> UserCertificates => Set<UserCertificate>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -35,6 +36,12 @@ namespace CertificateAPI.Data
             modelBuilder.Entity<User>()
                 .Property(u => u.CreatedAt)
                 .HasDefaultValueSql("GETUTCDATE()");
+
+            modelBuilder.Entity<Training>()
+                .HasOne(t => t.Certificate)
+                .WithOne(c => c.Training)
+                .HasForeignKey<Certificate>(c => c.TrainingId);
+
         }
     }
 }
